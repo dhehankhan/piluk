@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>PILUK – Shop All You Want</title>
+<title>Revo Store – Shop All You Want</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Barlow+Condensed:wght@500;700;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
@@ -582,7 +582,7 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);padding:50px 24px 24px
       <ul class="footer-contact">
         <li><i class="fas fa-phone-alt"></i><span>01754007716</span></li>
         <li><i class="fab fa-whatsapp"></i><span>WhatsApp: 01754007716</span></li>
-        <li><i class="fas fa-envelope"></i><span>support@revostore.com</span></li>
+        <li><i class="fas fa-envelope"></i><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a4d7d1d4d4cbd6d0e4d6c1d2cbd7d0cbd6c18ac7cbc9">[email&#160;protected]</a></span></li>
         <li><i class="fas fa-map-marker-alt"></i><span>Dhaka, Bangladesh</span></li>
         <li><i class="fas fa-clock"></i><span>Mon–Fri: 9am – 8pm</span></li>
       </ul>
@@ -659,7 +659,7 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);padding:50px 24px 24px
 <!-- ============================
      SCRIPT SECTION
 ============================= -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* =============================================
    CONFIGURATION — REPLACE WITH YOUR VALUES
    =============================================
@@ -675,14 +675,16 @@ footer{background:var(--dark);color:rgba(255,255,255,.75);padding:50px 24px 24px
    ============================================= */
 
 const CONFIG = {
-  // ⬇ PASTE YOUR GOOGLE SHEET ID HERE ⬇
-  SHEET_ID: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqCxCqvdOi2BFiSg-YlKcisxH8VKZx1mVof5sznqCChsieTHqqtu1YJef-gycwHA/pub?gid=1922661548&single=true&output=csv',
+  // ✅ CONNECTED GOOGLE SHEET
+  SHEET_ID: '1o84DvgLdhG7pn_1rWhb7F9tr2jLNx_lI',
+  // Sheet GID (from the URL after #gid=)
+  SHEET_GID: '1922661548',
   // Sheet name (default "Sheet1")
   SHEET_NAME: 'Sheet1',
   // WhatsApp number (without +, with country code)
   WA_NUMBER: '8801754007716',
   // Store name
-  STORE_NAME: 'PILUK',
+  STORE_NAME: 'Revo Store',
   // Currency symbol
   CURRENCY: '৳',
   // Auto-refresh every N minutes (0 = disabled)
@@ -702,21 +704,65 @@ let activeFilter = 'all';
 let activeTab = 'latest';
 
 /* =============================================
-   FETCH FROM GOOGLE SHEETS
+   FETCH FROM GOOGLE SHEETS  (CORS-safe for Vercel/GitHub Pages/any host)
    ============================================= */
+
+// ✅ Your published Google Sheet CSV URL
+const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRqCxCqvdOi2BFiSg-YlKcisxH8VKZx1mVof5sznqCChsieTHqqtu1YJef-gycwHA/pub?gid=1922661548&single=true&output=csv`;
+
+// CORS proxies tried in order — if one fails the next is used automatically
+const CORS_PROXIES = [
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  url => `https://cors.sh/?${url}`,
+  url => url,   // final attempt: direct (works if browser allows it)
+];
+
 async function loadProducts(){
-  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
-  try {
-    const res = await fetch(url + '&t=' + Date.now());
-    if(!res.ok) throw new Error('Sheet fetch failed');
-    const csv = await res.text();
-    allProducts = parseCSV(csv);
-    renderAll();
-  } catch(e){
-    console.warn('Google Sheets fetch failed, using demo data:', e);
-    allProducts = getDemoProducts();
-    renderAll();
+  let csv = null;
+  let lastError = null;
+
+  for(let i = 0; i < CORS_PROXIES.length; i++){
+    const proxyUrl = CORS_PROXIES[i](SHEET_CSV_URL) + (i === CORS_PROXIES.length - 1 ? '&cachebust=' + Date.now() : '');
+    try {
+      const res = await fetch(proxyUrl, { cache: 'no-store' });
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      // Validate it looks like CSV (has commas and multiple lines)
+      if(text.includes(',') && text.includes('\n')){
+        csv = text;
+        console.log(`✅ Sheet loaded via proxy ${i+1}`);
+        break;
+      } else {
+        throw new Error('Response does not look like CSV');
+      }
+    } catch(e){
+      lastError = e;
+      console.warn(`Proxy ${i+1} failed:`, e.message);
+    }
   }
+
+  if(csv){
+    const parsed = parseCSV(csv);
+    if(parsed.length > 0){
+      allProducts = parsed;
+      renderAll();
+      return;
+    }
+  }
+
+  // All proxies failed → show demo products with a warning banner
+  console.error('All proxies failed, using demo data. Last error:', lastError);
+  showSheetError();
+  allProducts = getDemoProducts();
+  renderAll();
+}
+
+function showSheetError(){
+  const banner = document.createElement('div');
+  banner.style.cssText = 'background:#fff3cd;color:#856404;padding:10px 20px;text-align:center;font-size:13px;font-weight:700;border-bottom:2px solid #ffc107;position:relative;z-index:999;';
+  banner.innerHTML = '⚠️ Could not load products from Google Sheet — showing demo data. Make sure your sheet is <b>Published to Web</b> (File → Share → Publish to Web → CSV). &nbsp;<button onclick="this.parentElement.remove()" style="background:#856404;color:white;border:none;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:12px">Dismiss</button>';
+  document.body.insertBefore(banner, document.body.firstChild);
 }
 
 function parseCSV(csv){
@@ -801,7 +847,7 @@ function renderAll(){
   hideLoading();
 
   if(CONFIG.AUTO_REFRESH_MIN > 0){
-    setTimeout(() => { loadProducts(); }, CONFIG.AUTO_REFRESH_MIN * 60000);
+    setInterval(() => { loadProducts(); }, CONFIG.AUTO_REFRESH_MIN * 60000);
   }
 }
 
@@ -1333,10 +1379,4 @@ document.addEventListener('DOMContentLoaded', () => {
         https://docs.google.com/spreadsheets/d/ [SHEET_ID] /edit
 
      5. Paste it in the CONFIG object at the top of the <script> section:
-        SHEET_ID: 'your_sheet_id_here'
-
-     That's it! Every time the page loads, it fetches fresh data from your sheet.
-     Auto-refresh is set to every 5 minutes by default.
-============================================= -->
-</body>
-</html>
+        SHEE
