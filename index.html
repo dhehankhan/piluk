@@ -736,7 +736,7 @@ footer{background:var(--dark);color:rgba(255,255,255,.65);padding:56px 24px 24px
       <ul class="footer-contact-list">
         <li><i class="fas fa-phone-alt"></i><span>01754007716</span></li>
         <li><i class="fab fa-whatsapp"></i><span>WhatsApp: 01754007716</span></li>
-        <li><i class="fas fa-envelope"></i><span>hello@piluk.com</span></li>
+        <li><i class="fas fa-envelope"></i><span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2dad7dededdf2c2dbdec7d99cd1dddf">[email&#160;protected]</a></span></li>
         <li><i class="fas fa-map-marker-alt"></i><span>Dhaka, Bangladesh</span></li>
         <li><i class="fas fa-clock"></i><span>Sat – Thu: 9am – 8pm</span></li>
       </ul>
@@ -811,7 +811,7 @@ footer{background:var(--dark);color:rgba(255,255,255,.65);padding:56px 24px 24px
 <!-- ═══════════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════════ -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ────────────────────────────────────────
    CONFIG
 ──────────────────────────────────────── */
@@ -822,14 +822,33 @@ const CONFIG = {
   REFRESH_MIN: 5,
 };
 
-/* ── Your Google Sheet published CSV (all proxies tried automatically) ── */
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Vfe1Ce7piUfSxfQCs2TIIhPEYjG102ui/edit?gid=1050908529#gid=1050908529';
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE SHEET CONNECTION
+   Sheet ID  : 1BSq0XCSuqurGaRuIlhQMufHH8_O6_4KT
+   Sheet GID : 158287138
+   ═══════════════════════════════════════════════════════════ */
 
-const PROXIES = [
+const SHEET_ID  = '1BSq0XCSuqurGaRuIlhQMufHH8_O6_4KT';
+const SHEET_GID = '158287138';
+
+// ── All possible URL formats for the same sheet ──────────────
+// We try every combination until one works
+const SHEET_URLS = [
+  // Format 1: Published web CSV (needs File→Publish to Web→CSV)
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv`,
+  // Format 2: Export (needs sheet shared as Anyone can view)
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`,
+  // Format 3: GViz query CSV
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`,
+];
+
+// ── CORS proxy wrappers ───────────────────────────────────────
+const PROXY_FNS = [
   u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
   u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-  u => `https://cors.sh/?${u}`,
-  u => u,
+  u => `https://thingproxy.freeboard.io/fetch/${u}`,
+  u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+  u => u,  // direct (last resort)
 ];
 
 /* ── State ── */
@@ -840,24 +859,93 @@ let heroList = [], currentSlide = 0, slideTimer;
 let currentModal = null, modalQty = 1;
 
 /* ────────────────────────────────────────
-   FETCH + PARSE SHEET
+   STATUS INDICATOR (visible on screen)
+──────────────────────────────────────── */
+function showStatus(msg, type='info'){
+  let bar = document.getElementById('sheetStatusBar');
+  if(!bar){
+    bar = document.createElement('div');
+    bar.id = 'sheetStatusBar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;padding:10px 20px;font-size:13px;font-weight:700;text-align:center;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:12px;';
+    document.body.prepend(bar);
+  }
+  const colors = {
+    info:    {bg:'#E3F2FD',color:'#1565C0',border:'#90CAF9'},
+    loading: {bg:'#FFF8E1',color:'#E65100',border:'#FFD54F'},
+    success: {bg:'#E8F5E9',color:'#2E7D32',border:'#A5D6A7'},
+    error:   {bg:'#FFEBEE',color:'#C62828',border:'#EF9A9A'},
+  };
+  const c = colors[type] || colors.info;
+  bar.style.background = c.bg;
+  bar.style.color = c.color;
+  bar.style.borderBottom = `2px solid ${c.border}`;
+  bar.innerHTML = msg + (type === 'success' ? ' <button onclick="document.getElementById(\'sheetStatusBar\').remove()" style="background:'+c.color+';color:white;border:none;border-radius:4px;padding:3px 12px;cursor:pointer;margin-left:8px;font-size:11px">✕ Dismiss</button>' : '');
+}
+function hideStatus(){ const b=document.getElementById('sheetStatusBar'); if(b) b.remove(); }
+
+/* ────────────────────────────────────────
+   FETCH + PARSE SHEET  (tries every URL × every proxy)
 ──────────────────────────────────────── */
 async function loadProducts(){
+  showStatus('🔄 Loading products from Google Sheet…', 'loading');
+
   let csv = null;
-  for(let i = 0; i < PROXIES.length; i++){
-    const url = PROXIES[i](SHEET_URL) + (i === PROXIES.length-1 ? `&cb=${Date.now()}` : '');
-    try {
-      const r = await fetch(url, {cache:'no-store'});
-      if(!r.ok) throw new Error(`HTTP ${r.status}`);
-      const t = await r.text();
-      if(t.includes(',') && t.includes('\n')){ csv = t; break; }
-    } catch(e){ console.warn(`Proxy ${i+1} failed:`,e.message); }
+  let attempts = [];
+
+  // Try every sheet URL with every proxy
+  for(const sheetUrl of SHEET_URLS){
+    for(let pi = 0; pi < PROXY_FNS.length; pi++){
+      const finalUrl = PROXY_FNS[pi](sheetUrl) + (pi===PROXY_FNS.length-1 ? `&_cb=${Date.now()}` : `&_cb=${Date.now()}`);
+      try {
+        const r = await fetch(finalUrl, {cache:'no-store', signal: AbortSignal.timeout(8000)});
+        if(!r.ok) throw new Error(`HTTP ${r.status}`);
+        const t = await r.text();
+
+        // Must look like a real CSV — has commas, multiple lines, not HTML
+        if(t.length > 30 && t.includes('\n') && !t.trim().startsWith('<') && (t.includes(',') || t.includes('"'))){
+          csv = t;
+          console.log(`✅ Sheet loaded! URL format ${SHEET_URLS.indexOf(sheetUrl)+1}, Proxy ${pi+1}`);
+          attempts.push(`✅ Success: URL${SHEET_URLS.indexOf(sheetUrl)+1} + Proxy${pi+1}`);
+          break;
+        } else {
+          attempts.push(`⚠️ URL${SHEET_URLS.indexOf(sheetUrl)+1}+P${pi+1}: response not CSV`);
+        }
+      } catch(e){
+        attempts.push(`❌ URL${SHEET_URLS.indexOf(sheetUrl)+1}+P${pi+1}: ${e.message}`);
+        console.warn(`Attempt failed:`, e.message);
+      }
+      if(csv) break;
+    }
+    if(csv) break;
   }
+
+  console.log('All attempts:', attempts);
+
   if(csv){
     const parsed = parseCSV(csv);
-    if(parsed.length){ allProducts = parsed; renderAll(); return; }
+    if(parsed.length > 0){
+      allProducts = parsed;
+      renderAll();
+      showStatus(`✅ ${parsed.length} products loaded from Google Sheet successfully!`, 'success');
+      setTimeout(hideStatus, 4000);
+      return;
+    } else {
+      showStatus('⚠️ Sheet connected but no products found — check your sheet has data from Row 2 onwards and column headers in Row 1.', 'error');
+      allProducts = demoProducts();
+      renderAll();
+      return;
+    }
   }
-  showSheetError();
+
+  // Everything failed — show detailed error with checklist
+  showStatus(
+    `❌ Could not load your Google Sheet. <strong>Quick Fix Checklist:</strong> ` +
+    `① File → Share → Publish to Web → Sheet1 → CSV → Publish ` +
+    `② Share button → Anyone with the link → Viewer ` +
+    `③ Wait 60 seconds and reload. ` +
+    `<button onclick="location.reload()" style="background:#C62828;color:white;border:none;border-radius:4px;padding:3px 12px;cursor:pointer;margin-left:8px;font-size:11px">🔄 Retry</button>`,
+    'error'
+  );
   allProducts = demoProducts();
   renderAll();
 }
@@ -904,12 +992,13 @@ function csvRow(row){
   return r;
 }
 
-function showSheetError(){
-  const b=document.createElement('div');
-  b.className='sheet-err';
-  b.innerHTML='⚠️ Could not connect to your Google Sheet — showing sample products. Make sure it is <strong>Published to Web as CSV</strong>. <button onclick="this.parentElement.remove()" style="margin-left:12px;background:var(--gold);color:white;border:none;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:11px">Dismiss</button>';
-  document.body.prepend(b);
-}
+function showSheetError(){ /* handled by showStatus() */ }
+
+
+
+
+
+
 
 /* ────────────────────────────────────────
    DEMO PRODUCTS (handbag themed)
@@ -942,7 +1031,7 @@ function renderAll(){
   updateCartUI();
   hideLoading();
   document.title = CONFIG.BRAND + ' – Premium Women\'s Handbags';
-  if(CONFIG.REFRESH_MIN>0) setInterval(loadProducts, CONFIG.REFRESH_MIN*60000);
+  if(CONFIG.REFRESH_MIN>0 && !window._refreshSet){ window._refreshSet=true; setInterval(loadProducts, CONFIG.REFRESH_MIN*60000); }
 }
 
 /* ────────────────────────────────────────
@@ -1356,11 +1445,4 @@ function scrollGrid(id,d){ document.getElementById(id).scrollBy({left:d*300,beha
 
 /* ────────────────────────────────────────
    INIT
-──────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded',()=>{
-  loadProducts();
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeModal(); closeCart(); } });
-});
-</script>
-</body>
-</html>
+───────────────────────────────�
