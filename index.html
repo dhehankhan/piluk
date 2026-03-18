@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Revo Store – Shop All You Want</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Barlow+Condensed:wght@500;700;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+/* ========== CSS VARIABLES ========== */
+:root{
+  --teal:#009DA6;
+  --teal-dark:#007A82;
+  --teal-light:#E0F7F9;
+  --orange:#FF6B00;
+  --orange-light:#FFF3E8;
+  --yellow:#FFD600;
+  --purple:#6B3FA0;
+  --red:#E53935;
+  --green:#43A047;
+  --dark:#1A1D23;
+  --mid:#3D4350;
+  --gray:#8892A0;
+  --light:#F4F6F9;
+  --white:#FFFFFF;
+  --border:#E2E7EF;
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.14);
+  --radius:10px;
+  --radius-lg:16px;
+  --font:'Nunito',sans-serif;
+  --font-head:'Barlow Condensed',sans-serif;
+  --cart-count:0;
+}
+
+/* ========== RESET ========== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--dark);background:var(--light);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button{cursor:pointer;border:none;background:none;font-family:var(--font)}
+ul{list-style:none}
+input{font-family:var(--font)}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--light)}
+::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px}
+
+/* ========== TOP BAR ========== */
+.topbar{background:var(--dark);padding:7px 0;font-size:12px;color:rgba(255,255,255,.7)}
+.topbar-inner{max-width:1280px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-msg a{color:var(--yellow);font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:20px}
+.topbar-right a{color:rgba(255,255,255,.75);transition:color .2s}
+.topbar-right a:hover{color:var(--white)}
+.topbar-right .sep{color:rgba(255,255,255,.25)}
+
+/* ========== HEADER ========== */
+header{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:900;box-shadow:var(--shadow)}
+.header-inner{max-width:1280px;margin:auto;padding:14px 24px;display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;min-width:140px}
+.logo-icon{width:38px;height:38px;background:var(--teal);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:22px;height:22px;fill:white}
+.logo-text{font-family:var(--font-head);font-size:26px;font-weight:900;color:var(--teal);letter-spacing:-0.5px;line-height:1}
+.logo-sub{font-size:10px;color:var(--gray);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.search-bar{flex:1;display:flex;border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.search-bar:focus-within{border-color:var(--teal)}
+.search-cat{padding:0 14px;background:var(--light);border-right:1px solid var(--border);font-size:12px;font-weight:700;color:var(--mid);cursor:pointer;appearance:none;border:none;outline:none}
+.search-input{flex:1;padding:10px 14px;border:none;outline:none;font-size:14px;color:var(--dark)}
+.search-btn{background:var(--teal);color:white;padding:0 20px;font-size:16px;border:none;cursor:pointer;transition:background .2s}
+.search-btn:hover{background:var(--teal-dark)}
+.header-contact{text-align:right;min-width:160px}
+.header-contact .phone{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--teal)}
+.header-contact .email{font-size:11px;color:var(--gray)}
+.header-icons{display:flex;align-items:center;gap:6px}
+.hicon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mid);font-size:18px;transition:all .2s;position:relative;background:var(--light)}
+.hicon:hover{background:var(--teal);color:white}
+.hicon .badge{position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;background:var(--orange);color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+/* ========== NAV ========== */
+nav{background:var(--teal);position:relative;z-index:800}
+.nav-inner{max-width:1280px;margin:auto;padding:0 24px;display:flex;align-items:center}
+.nav-item{padding:14px 18px;color:rgba(255,255,255,.9);font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:background .2s;cursor:pointer;display:flex;align-items:center;gap:5px}
+.nav-item:hover,.nav-item.active{background:rgba(0,0,0,.15);color:white}
+.nav-item .badge-new{background:var(--orange);color:white;font-size:9px;font-weight:800;padding:2px 5px;border-radius:3px;margin-left:4px}
+.nav-item .badge-hot{background:var(--red);color:white;font-size:9px;font-weight:800;padding:2px 5px;border-radius:3px;margin-left:4px}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:16px}
+.nav-right a{color:rgba(255,255,255,.8);font-size:18px;transition:color .2s}
+.nav-right a:hover{color:white}
+
+/* ========== TRUST STRIP ========== */
+.trust-strip{background:var(--white);border-bottom:1px solid var(--border);padding:10px 0}
+.trust-inner{max-width:1280px;margin:auto;padding:0 24px;display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid)}
+.trust-item i{color:var(--teal);font-size:14px}
+.trust-item strong{color:var(--dark)}
+
+/* ========== HERO SLIDER ========== */
+.hero{background:var(--white);overflow:hidden;position:relative}
+.hero-slider{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.hero-slide{min-width:100%;padding:50px 60px;display:flex;align-items:center;gap:40px;min-height:380px;position:relative;overflow:hidden}
+.hero-slide::before{content:'';position:absolute;inset:0;opacity:.06;background:repeating-linear-gradient(45deg,#000 0,#000 1px,transparent 1px,transparent 10px)}
+.hero-content{flex:1;z-index:2}
+.hero-tag{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;opacity:.8}
+.hero-title{font-family:var(--font-head);font-size:52px;font-weight:900;line-height:1;margin-bottom:12px;letter-spacing:-1px}
+.hero-desc{font-size:14px;opacity:.75;margin-bottom:20px;max-width:300px;line-height:1.6}
+.hero-price{font-family:var(--font-head);font-size:42px;font-weight:900;margin-bottom:20px}
+.hero-price .orig{font-size:20px;text-decoration:line-through;opacity:.5;margin-left:8px}
+.hero-btns{display:flex;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;font-weight:700;font-size:13px;transition:all .22s;letter-spacing:.3px}
+.btn-primary{background:var(--teal);color:white}
+.btn-primary:hover{background:var(--teal-dark);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,157,166,.35)}
+.btn-outline{border:2px solid currentColor;color:inherit}
+.btn-outline:hover{background:rgba(0,0,0,.08)}
+.btn-orange{background:var(--orange);color:white}
+.btn-orange:hover{background:#e55f00;transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,0,.35)}
+.hero-images{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:20px;z-index:2}
+.hero-images img{height:220px;width:auto;object-fit:contain;filter:drop-shadow(0 20px 30px rgba(0,0,0,.25));transition:transform .4s}
+.hero-images img:hover{transform:translateY(-8px) scale(1.04)}
+.hero-dots{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
+.hero-dot{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,.2);cursor:pointer;transition:all .2s}
+.hero-dot.active{width:24px;border-radius:4px;background:var(--teal)}
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.15);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;transition:background .2s;font-size:14px}
+.hero-arrow:hover{background:var(--teal)}
+.hero-arrow.prev{left:16px}
+.hero-arrow.next{right:16px}
+
+/* Slide color themes */
+.slide-teal{background:linear-gradient(135deg,#E0F7F9 0%,#B2EBF2 100%);color:var(--dark)}
+.slide-teal .hero-price{color:var(--teal)}
+.slide-purple{background:linear-gradient(135deg,#EDE7F6 0%,#D1C4E9 100%);color:var(--dark)}
+.slide-purple .hero-price{color:var(--purple)}
+.slide-orange{background:linear-gradient(135deg,#FFF3E0 0%,#FFE0B2 100%);color:var(--dark)}
+.slide-orange .hero-price{color:var(--orange)}
+
+/* ========== PROMO BANNERS ========== */
+.promo-grid{max-width:1280px;margin:28px auto;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.promo-card{border-radius:var(--radius-lg);padding:28px 24px;position:relative;overflow:hidden;min-height:160px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;transition:transform .25s,box-shadow .25s}
+.promo-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.promo-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.5) 0%,transparent 70%)}
+.promo-img{position:absolute;right:0;bottom:0;height:100%;width:55%;object-fit:cover;object-position:left center}
+.promo-content{position:relative;z-index:2}
+.promo-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.8);margin-bottom:4px}
+.promo-name{font-family:var(--font-head);font-size:22px;font-weight:900;color:white;line-height:1.1;margin-bottom:10px}
+.promo-price-tag{display:inline-block;background:var(--teal);color:white;font-weight:800;font-size:14px;padding:5px 14px;border-radius:5px}
+.promo-see{display:inline-flex;align-items:center;gap:5px;color:rgba(255,255,255,.9);font-size:12px;font-weight:700;margin-bottom:8px;transition:gap .2s}
+.promo-card:hover .promo-see{gap:10px}
+
+/* ========== SECTION HEADER ========== */
+.section{max-width:1280px;margin:0 auto;padding:0 24px 36px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid var(--border)}
+.section-tabs{display:flex;gap:0;border-bottom:none}
+.section-tab{padding:8px 20px;font-weight:800;font-size:14px;color:var(--gray);letter-spacing:.3px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase}
+.section-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.section-nav{display:flex;gap:8px}
+.snav-btn{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--border);color:var(--gray);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all .2s}
+.snav-btn:hover{background:var(--teal);color:white;border-color:var(--teal)}
+
+/* ========== PRODUCT GRID ========== */
+.products-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.product-card{background:var(--white);border-radius:var(--radius-lg);overflow:hidden;border:1.5px solid var(--border);transition:all .25s;position:relative;display:flex;flex-direction:column}
+.product-card:hover{border-color:var(--teal);box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.product-badge{position:absolute;top:10px;left:10px;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;z-index:5;letter-spacing:.5px}
+.badge-sale{background:var(--orange);color:white}
+.badge-new{background:var(--teal);color:white}
+.badge-hot{background:var(--red);color:white}
+.badge-out{background:var(--gray);color:white}
+.product-wish{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:white;box-shadow:var(--shadow);color:var(--gray);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:all .2s;z-index:5}
+.product-wish:hover,.product-wish.active{color:var(--red)}
+.product-img-wrap{height:150px;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--light);position:relative;overflow:hidden}
+.product-img-wrap img{max-height:110px;width:auto;object-fit:contain;transition:transform .4s}
+.product-card:hover .product-img-wrap img{transform:scale(1.07)}
+.product-quick{position:absolute;bottom:-40px;left:0;right:0;background:var(--teal);color:white;text-align:center;padding:8px;font-size:11px;font-weight:800;letter-spacing:.5px;transition:bottom .25s;cursor:pointer}
+.product-card:hover .product-quick{bottom:0}
+.product-info{padding:12px 14px;flex:1;display:flex;flex-direction:column}
+.product-cat{font-size:10px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.product-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.meta-chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--light);color:var(--mid);border:1px solid var(--border)}
+.product-price{display:flex;align-items:center;gap:6px;margin-bottom:10px;margin-top:auto}
+.price-current{font-family:var(--font-head);font-size:18px;font-weight:900;color:var(--teal)}
+.price-orig{font-size:12px;color:var(--gray);text-decoration:line-through}
+.product-actions{display:flex;gap:6px}
+.btn-cart{flex:1;background:var(--teal-light);color:var(--teal);font-size:11px;font-weight:800;padding:7px 6px;border-radius:7px;text-align:center;transition:all .2s;letter-spacing:.3px}
+.btn-cart:hover{background:var(--teal);color:white}
+.btn-buy{flex:1;background:var(--orange);color:white;font-size:11px;font-weight:800;padding:7px 6px;border-radius:7px;text-align:center;transition:all .2s;letter-spacing:.3px}
+.btn-buy:hover{background:#e55f00}
+
+/* ========== PROMO BANNERS 2 ========== */
+.promo2{max-width:1280px;margin:0 auto 36px;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.promo2-card{border-radius:var(--radius-lg);overflow:hidden;position:relative;height:200px;cursor:pointer}
+.promo2-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.promo2-card:hover img{transform:scale(1.05)}
+.promo2-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:32px;background:linear-gradient(90deg,rgba(0,0,0,.55) 0%,transparent 70%)}
+.promo2-label{font-size:10px;font-weight:800;letter-spacing:2px;color:rgba(255,255,255,.8);text-transform:uppercase;margin-bottom:4px}
+.promo2-title{font-family:var(--font-head);font-size:26px;font-weight:900;color:white;line-height:1.1;margin-bottom:12px}
+.promo2-price{display:inline-block;background:var(--orange);color:white;font-weight:900;font-size:16px;padding:5px 16px;border-radius:6px}
+
+/* ========== FEATURED PRODUCTS ========== */
+.featured-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+
+/* ========== CATEGORY CARDS ========== */
+.cat-grid{max-width:1280px;margin:0 auto 36px;padding:0 24px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.cat-card{background:var(--white);border-radius:var(--radius);padding:20px 12px;text-align:center;border:1.5px solid var(--border);cursor:pointer;transition:all .22s}
+.cat-card:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:var(--shadow)}
+.cat-icon{width:56px;height:56px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:var(--teal);transition:background .2s}
+.cat-card:hover .cat-icon{background:var(--teal);color:white}
+.cat-name{font-size:12px;font-weight:800;color:var(--dark)}
+.cat-count{font-size:10px;color:var(--gray);margin-top:2px}
+
+/* ========== NEWSLETTER ========== */
+.newsletter{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);padding:50px 24px;text-align:center;margin:36px 0}
+.newsletter h2{font-family:var(--font-head);font-size:36px;font-weight:900;color:white;margin-bottom:8px}
+.newsletter p{color:rgba(255,255,255,.8);margin-bottom:24px;font-size:15px}
+.newsletter-form{display:flex;max-width:480px;margin:auto;gap:0;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.newsletter-input{flex:1;padding:14px 18px;border:none;outline:none;font-size:14px}
+.newsletter-btn{background:var(--orange);color:white;padding:14px 24px;font-weight:800;font-size:13px;letter-spacing:.5px;white-space:nowrap}
+.newsletter-btn:hover{background:#e55f00}
+
+/* ========== FOOTER ========== */
+footer{background:var(--dark);color:rgba(255,255,255,.75);padding:50px 24px 24px}
+.footer-grid{max-width:1280px;margin:auto;display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;margin-bottom:40px}
+.footer-logo{font-family:var(--font-head);font-size:32px;font-weight:900;color:var(--teal);margin-bottom:12px}
+.footer-desc{font-size:13px;line-height:1.7;margin-bottom:20px}
+.footer-social{display:flex;gap:10px}
+.fsoc{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .2s;cursor:pointer}
+.fsoc:hover{background:var(--teal)}
+.footer-title{font-size:13px;font-weight:800;color:white;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.footer-links li{margin-bottom:9px}
+.footer-links a{font-size:13px;transition:color .2s;display:flex;align-items:center;gap:6px}
+.footer-links a:hover{color:var(--teal)}
+.footer-links a::before{content:'›';color:var(--teal)}
+.footer-contact li{display:flex;gap:10px;margin-bottom:12px;font-size:13px}
+.footer-contact i{color:var(--teal);margin-top:2px;min-width:14px}
+.footer-bottom{max-width:1280px;margin:0 auto;border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:rgba(255,255,255,.45)}
+.footer-bottom a{color:var(--teal)}
+
+/* ========== CART SIDEBAR ========== */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1100;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-sidebar{position:fixed;right:-420px;top:0;bottom:0;width:400px;background:white;z-index:1200;display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1);box-shadow:-10px 0 40px rgba(0,0,0,.15)}
+.cart-sidebar.open{right:0}
+.cart-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-head h3{font-family:var(--font-head);font-size:22px;font-weight:900;display:flex;align-items:center;gap:8px}
+.cart-head h3 span{background:var(--teal);color:white;width:24px;height:24px;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center}
+.cart-close{width:34px;height:34px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--gray);cursor:pointer;transition:all .2s}
+.cart-close:hover{background:var(--red);color:white}
+.cart-items{flex:1;overflow-y:auto;padding:16px 24px}
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.cart-item-img{width:64px;height:64px;border-radius:8px;object-fit:contain;background:var(--light);padding:6px;flex-shrink:0}
+.cart-item-info{flex:1}
+.cart-item-name{font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.3}
+.cart-item-meta{font-size:11px;color:var(--gray);margin-bottom:8px}
+.cart-item-bottom{display:flex;align-items:center;justify-content:space-between}
+.qty-ctrl{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.qty-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--light);cursor:pointer;font-weight:800;font-size:14px;transition:background .2s}
+.qty-btn:hover{background:var(--teal);color:white}
+.qty-val{width:30px;text-align:center;font-size:13px;font-weight:700;line-height:26px;border:none;outline:none;background:white}
+.cart-item-price{font-family:var(--font-head);font-size:16px;font-weight:900;color:var(--teal)}
+.cart-item-del{color:var(--gray);cursor:pointer;font-size:14px;margin-left:8px;transition:color .2s}
+.cart-item-del:hover{color:var(--red)}
+.cart-empty{text-align:center;padding:60px 20px;color:var(--gray)}
+.cart-empty i{font-size:48px;margin-bottom:16px;color:var(--border)}
+.cart-empty p{font-size:15px;font-weight:700}
+.cart-footer{padding:20px 24px;border-top:1px solid var(--border)}
+.cart-subtotal{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px;font-weight:700}
+.cart-total{display:flex;justify-content:space-between;margin-bottom:18px;font-family:var(--font-head);font-size:20px;font-weight:900}
+.cart-total span:last-child{color:var(--teal)}
+.cart-checkout{display:flex;flex-direction:column;gap:8px}
+.btn-whatsapp{background:#25D366;color:white;padding:14px;border-radius:8px;font-weight:800;font-size:14px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s}
+.btn-whatsapp:hover{background:#1ebe5d}
+
+/* ========== PRODUCT MODAL ========== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:var(--radius-lg);max-width:760px;width:100%;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .3s}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-family:var(--font-head);font-size:22px;font-weight:900}
+.modal-close{width:34px;height:34px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);transition:all .2s}
+.modal-close:hover{background:var(--red);color:white}
+.modal-body{display:grid;grid-template-columns:1fr 1fr;gap:32px;padding:28px}
+.modal-img-wrap{background:var(--light);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;min-height:280px;padding:24px}
+.modal-img-wrap img{max-height:240px;width:auto;object-fit:contain}
+.modal-info{}
+.modal-sku{font-size:11px;color:var(--gray);font-weight:700;margin-bottom:6px;letter-spacing:1px}
+.modal-name{font-family:var(--font-head);font-size:28px;font-weight:900;line-height:1.1;margin-bottom:12px}
+.modal-price{font-family:var(--font-head);font-size:34px;font-weight:900;color:var(--teal);margin-bottom:16px;display:flex;align-items:baseline;gap:10px}
+.modal-price .orig{font-size:18px;color:var(--gray);text-decoration:line-through}
+.modal-desc{font-size:13px;color:var(--mid);line-height:1.7;margin-bottom:20px;padding:14px;background:var(--light);border-radius:8px;border-left:3px solid var(--teal)}
+.modal-specs{margin-bottom:20px}
+.modal-specs h4{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:10px}
+.spec-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.spec-label{font-size:12px;font-weight:700;color:var(--mid);min-width:80px}
+.spec-value{font-size:12px;font-weight:600;color:var(--dark)}
+.spec-color-dot{width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 0 0 1.5px var(--border);display:inline-block;margin-right:4px;vertical-align:middle}
+.modal-actions{display:flex;flex-direction:column;gap:10px}
+.modal-qty{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.modal-qty label{font-size:12px;font-weight:700;color:var(--mid)}
+.btn-full{width:100%;padding:14px;border-radius:8px;font-size:14px;font-weight:800;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.stock-status{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;margin-bottom:14px}
+.stock-dot{width:8px;height:8px;border-radius:50%}
+.in-stock .stock-dot{background:var(--green)}
+.in-stock{color:var(--green)}
+.out-stock .stock-dot{background:var(--gray)}
+.out-stock{color:var(--gray)}
+
+/* ========== LOADING ========== */
+.loading-overlay{position:fixed;inset:0;background:white;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loader-ring{width:60px;height:60px;border:4px solid var(--teal-light);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{font-family:var(--font-head);font-size:22px;font-weight:900;color:var(--teal)}
+
+/* ========== TOAST ========== */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:5000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--dark);color:white;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;transform:translateX(120%);transition:transform .3s;box-shadow:var(--shadow-lg);max-width:280px}
+.toast.show{transform:translateX(0)}
+.toast i{color:var(--teal);font-size:16px}
+.toast.success i{color:var(--green)}
+.toast.warning i{color:var(--orange)}
+
+/* ========== STICKY WHATSAPP ========== */
+.wa-sticky{position:fixed;bottom:28px;left:28px;z-index:1000;width:56px;height:56px;border-radius:50%;background:#25D366;color:white;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.5);cursor:pointer;animation:waPulse 2s infinite}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8),0 0 0 8px rgba(37,211,102,.15)}}
+
+/* ========== FILTER BAR ========== */
+.filter-bar{max-width:1280px;margin:0 auto 24px;padding:0 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filter-label{font-size:12px;font-weight:800;color:var(--mid);letter-spacing:1px;text-transform:uppercase}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;font-weight:700;color:var(--mid);cursor:pointer;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1100px){
+  .products-grid,.featured-grid{grid-template-columns:repeat(4,1fr)}
+  .promo-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:24px}
+}
+@media(max-width:768px){
+  .header-inner{flex-wrap:wrap}
+  .products-grid,.featured-grid{grid-template-columns:repeat(2,1fr)}
+  .promo-grid{grid-template-columns:1fr}
+  .promo2{grid-template-columns:1fr}
+  .cat-grid{grid-template-columns:repeat(3,1fr)}
+  .modal-body{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .hero-slide{padding:30px 20px;flex-direction:column;text-align:center}
+  .hero-title{font-size:36px}
+  .topbar-right{display:none}
+  .nav-item{padding:10px 12px;font-size:12px}
+  .header-contact{display:none}
+}
+@media(max-width:480px){
+  .products-grid,.featured-grid{grid-template-columns:repeat(2,1fr)}
+  .cart-sidebar{width:100%;right:-100%}
+}
+
+/* ========== SECTION WRAP ========== */
+.section-wrap{background:var(--white);padding:28px 0;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.section-wrap-gray{padding:28px 0;margin-bottom:20px}
+
+/* Animate on load */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.product-card{animation:fadeUp .4s ease both}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Loading Store…</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- STICKY WHATSAPP -->
+<a class="wa-sticky" href="https://wa.me/8801754007716" target="_blank" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-msg">Default welcome msg: <a href="#">Join Free</a> <span class="sep">|</span> <a href="#">Sign In</a></div>
+    <div class="topbar-right">
+      <a href="#"><i class="fas fa-user fa-xs"></i> Login</a>
+      <span class="sep">|</span>
+      <a href="#"><i class="fas fa-user-circle fa-xs"></i> My Account</a>
+      <span class="sep">|</span>
+      <a href="#"><i class="fas fa-globe fa-xs"></i> English</a>
+      <span class="sep">|</span>
+      <a href="#">USD</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M6 2l-2 6h16l-2-6H6zm-2 8l1 10h14l1-10H4zm7 2h2v6h-2v-6z"/></svg>
+      </div>
+      <div>
+        <div class="logo-text" id="storeName">Revo</div>
+        <div class="logo-sub">Shop All You Want</div>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search products…" oninput="handleSearch(this.value)"/>
+      <button class="search-btn" onclick="handleSearch(document.getElementById('searchInput').value)"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="header-contact">
+      <div class="phone"><i class="fas fa-headset" style="font-size:14px;margin-right:5px"></i>01754007716</div>
+      <div class="email">WhatsApp Support Available</div>
+    </div>
+    <div class="header-icons">
+      <div class="hicon" title="Wishlist"><i class="far fa-heart"></i></div>
+      <div class="hicon" onclick="openCart()" title="Cart" style="cursor:pointer">
+        <i class="fas fa-shopping-cart"></i>
+        <div class="badge" id="cartBadge">0</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-item active" onclick="filterCat('all')">HOME <span class="badge-new">New</span></div>
+    <div class="nav-item" onclick="filterCat('all')">SHOP <span class="badge-hot">Hot</span></div>
+    <div class="nav-item">PROMOTIONS</div>
+    <div class="nav-item">BLOG</div>
+    <div class="nav-item">PORTFOLIOS</div>
+    <div class="nav-item">PAGES</div>
+    <div class="nav-right">
+      <a href="#" title="Wishlist"><i class="far fa-heart"></i></a>
+      <a href="#" title="Compare"><i class="fas fa-exchange-alt"></i></a>
+      <a href="#" onclick="openCart();return false;" title="Cart"><i class="fas fa-shopping-cart"></i></a>
+    </div>
+  </div>
+</nav>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item"><i class="fas fa-check-circle"></i><span>Official Store — <strong>1100+ products online</strong></span></div>
+    <div class="trust-item"><i class="fas fa-check-circle"></i><span>Free shipping &amp; returns for <strong>members</strong></span></div>
+    <div class="trust-item"><i class="fas fa-check-circle"></i><span>Same-day dispatch before <strong>8pm (Mon–Fri)</strong></span></div>
+  </div>
+</div>
+
+<!-- HERO SLIDER -->
+<div class="hero">
+  <div class="hero-slider" id="heroSlider">
+    <!-- Slides injected dynamically; fallback below -->
+    <div class="hero-slide slide-teal">
+      <div class="hero-content">
+        <div class="hero-tag">Our Best</div>
+        <div class="hero-title">FEATURED<br>PRODUCTS</div>
+        <div class="hero-desc">Discover our top picks. Premium quality, unbeatable prices.</div>
+        <div class="hero-price">Loading… <span class="orig"></span></div>
+        <div class="hero-btns">
+          <button class="btn btn-primary"><i class="fas fa-shopping-bag"></i> Shop Now</button>
+        </div>
+      </div>
+      <div class="hero-images" id="heroImages">
+        <img src="https://via.placeholder.com/200x200/009DA6/FFFFFF?text=Product" alt="hero"/>
+      </div>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+  <div class="hero-arrow prev" onclick="slideHero(-1)">&#8249;</div>
+  <div class="hero-arrow next" onclick="slideHero(1)">&#8250;</div>
+</div>
+
+<!-- PROMO BANNERS -->
+<div class="promo-grid" id="promoGrid">
+  <!-- Injected dynamically -->
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="filterCat('all',this)">All</button>
+</div>
+
+<!-- LATEST / BEST SELLING -->
+<div class="section-wrap">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-tabs">
+        <div class="section-tab active" onclick="switchTab('latest',this)">LATEST PRODUCTS</div>
+        <div class="section-tab" onclick="switchTab('featured',this)">BEST SELLING</div>
+      </div>
+      <div class="section-nav">
+        <div class="snav-btn" onclick="scrollProducts(-1)"><i class="fas fa-chevron-left"></i></div>
+        <div class="snav-btn" onclick="scrollProducts(1)"><i class="fas fa-chevron-right"></i></div>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</div>
+
+<!-- PROMO BANNERS 2 -->
+<div class="promo2" id="promo2" style="display:none">
+  <!-- Injected if banner products exist -->
+</div>
+
+<!-- FEATURED PRODUCTS -->
+<div class="section-wrap">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-tabs">
+        <div class="section-tab active">FEATURED PRODUCTS</div>
+      </div>
+    </div>
+    <div class="featured-grid" id="featuredGrid"></div>
+  </div>
+</div>
+
+<!-- CATEGORY SECTION -->
+<div class="section-wrap-gray">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-tabs"><div class="section-tab active">FEATURED CATEGORIES</div></div>
+    </div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <h2>Subscribe &amp; Save</h2>
+  <p>Get exclusive deals and new arrivals straight to your inbox.</p>
+  <div class="newsletter-form">
+    <input type="email" class="newsletter-input" placeholder="Enter your email address…"/>
+    <button class="newsletter-btn" onclick="showToast('Thanks for subscribing!','success')">SUBSCRIBE</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo" id="footerName">Revo</div>
+      <div class="footer-desc">Your one-stop destination for premium electronics, fashion, and lifestyle products. Quality guaranteed.</div>
+      <div class="footer-social">
+        <div class="fsoc"><i class="fab fa-facebook-f"></i></div>
+        <div class="fsoc"><i class="fab fa-twitter"></i></div>
+        <div class="fsoc"><i class="fab fa-instagram"></i></div>
+        <div class="fsoc"><i class="fab fa-youtube"></i></div>
+        <div class="fsoc" onclick="window.open('https://wa.me/8801754007716','_blank')"><i class="fab fa-whatsapp"></i></div>
+      </div>
+    </div>
+    <div>
+      <div class="footer-title">Quick Links</div>
+      <ul class="footer-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">My Account</div>
+      <ul class="footer-links">
+        <li><a href="#">Sign In</a></li>
+        <li><a href="#">View Cart</a></li>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Help Center</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-title">Contact Us</div>
+      <ul class="footer-contact">
+        <li><i class="fas fa-phone-alt"></i><span>01754007716</span></li>
+        <li><i class="fab fa-whatsapp"></i><span>WhatsApp: 01754007716</span></li>
+        <li><i class="fas fa-envelope"></i><span>support@revostore.com</span></li>
+        <li><i class="fas fa-map-marker-alt"></i><span>Dhaka, Bangladesh</span></li>
+        <li><i class="fas fa-clock"></i><span>Mon–Fri: 9am – 8pm</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 <a href="#">Revo Store</a>. All rights reserved.</span>
+    <span>Powered by Google Sheets · Built with ❤️</span>
+  </div>
+</footer>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-head">
+    <h3><i class="fas fa-shopping-cart"></i> Cart <span id="cartCountHead">0</span></h3>
+    <div class="cart-close" onclick="closeCart()"><i class="fas fa-times"></i></div>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">৳0</span></div>
+    <div class="cart-total"><span>Total</span><span id="cartTotal">৳0</span></div>
+    <div class="cart-checkout">
+      <button class="btn-full btn-whatsapp" onclick="checkoutWhatsApp()">
+        <i class="fab fa-whatsapp"></i> Checkout via WhatsApp
+      </button>
+      <button class="btn-full btn btn-primary" onclick="showToast('Redirecting to checkout…','success')">
+        <i class="fas fa-lock"></i> Secure Checkout
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Product Details</h3>
+      <div class="modal-close" onclick="closeModalDirect()"><i class="fas fa-times"></i></div>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-img-wrap">
+          <img id="modalImg" src="" alt="Product"/>
+        </div>
+      </div>
+      <div class="modal-info">
+        <div class="modal-sku" id="modalSku">SKU: —</div>
+        <div class="modal-name" id="modalName">—</div>
+        <div class="modal-price"><span id="modalPrice">—</span><span class="orig" id="modalOrig"></span></div>
+        <div class="modal-desc" id="modalDesc">—</div>
+        <div class="modal-specs">
+          <h4>Specifications</h4>
+          <div id="modalSpecs"></div>
+        </div>
+        <div id="modalStock" class="stock-status in-stock"><div class="stock-dot"></div><span>In Stock</span></div>
+        <div class="modal-qty">
+          <label>Qty:</label>
+          <div class="qty-ctrl">
+            <div class="qty-btn" onclick="modalQtyChange(-1)">−</div>
+            <div class="qty-val" id="modalQtyVal">1</div>
+            <div class="qty-btn" onclick="modalQtyChange(1)">+</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-full btn btn-primary" onclick="addToCartModal()"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+          <button class="btn-full btn btn-orange" onclick="buyNowModal()"><i class="fab fa-whatsapp"></i> Buy Now via WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     SCRIPT SECTION
+============================= -->
+<script>
+/* =============================================
+   CONFIGURATION — REPLACE WITH YOUR VALUES
+   =============================================
+   1. Publish your Google Sheet: File → Share → Publish to Web → CSV
+   2. Copy the Sheet ID from the URL: docs.google.com/spreadsheets/d/SHEET_ID/...
+   3. Paste it below.
+
+   SHEET COLUMN ORDER (Row 1 = Headers):
+   A: SKU | B: Name | C: Category | D: Price | E: OriginalPrice
+   F: Color | G: Size | H: Material | I: ImageURL | J: Badge
+   K: Description | L: Featured (yes/no) | M: Stock (in stock/out of stock)
+   N: HeroSlide (yes/no) | O: PromoBanner (yes/no) | P: WhatsappMsg
+   ============================================= */
+
+const CONFIG = {
+  // ⬇ PASTE YOUR GOOGLE SHEET ID HERE ⬇
+  SHEET_ID: 'YOUR_GOOGLE_SHEET_ID_HERE',
+  // Sheet name (default "Sheet1")
+  SHEET_NAME: 'Sheet1',
+  // WhatsApp number (without +, with country code)
+  WA_NUMBER: '8801754007716',
+  // Store name
+  STORE_NAME: 'Revo Store',
+  // Currency symbol
+  CURRENCY: '৳',
+  // Auto-refresh every N minutes (0 = disabled)
+  AUTO_REFRESH_MIN: 5,
+};
+
+/* ---- State ---- */
+let allProducts = [];
+let filteredProducts = [];
+let cart = JSON.parse(localStorage.getItem('revo_cart') || '[]');
+let currentModal = null;
+let modalQty = 1;
+let heroSlides = [];
+let currentSlide = 0;
+let slideTimer;
+let activeFilter = 'all';
+let activeTab = 'latest';
+
+/* =============================================
+   FETCH FROM GOOGLE SHEETS
+   ============================================= */
+async function loadProducts(){
+  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
+  try {
+    const res = await fetch(url + '&t=' + Date.now());
+    if(!res.ok) throw new Error('Sheet fetch failed');
+    const csv = await res.text();
+    allProducts = parseCSV(csv);
+    renderAll();
+  } catch(e){
+    console.warn('Google Sheets fetch failed, using demo data:', e);
+    allProducts = getDemoProducts();
+    renderAll();
+  }
+}
+
+function parseCSV(csv){
+  const lines = csv.trim().split('\n');
+  const headers = parseCSVRow(lines[0]).map(h => h.toLowerCase().trim().replace(/"/g,''));
+  const products = [];
+  for(let i = 1; i < lines.length; i++){
+    const cells = parseCSVRow(lines[i]);
+    if(!cells[0] || cells[0].replace(/"/g,'').trim() === '') continue;
+    const obj = {};
+    headers.forEach((h,idx) => { obj[h] = (cells[idx]||'').replace(/^"|"$/g,'').trim(); });
+    // Map to standard keys regardless of exact header name
+    const p = {
+      sku:       obj.sku || obj.a || `SKU-${i}`,
+      name:      obj.name || obj.b || 'Product',
+      category:  obj.category || obj.c || 'General',
+      price:     parseFloat(obj.price || obj.d || 0),
+      origPrice: parseFloat(obj.originalprice || obj['original price'] || obj.e || 0),
+      color:     obj.color || obj.f || '',
+      size:      obj.size || obj.g || '',
+      material:  obj.material || obj.h || '',
+      image:     obj.imageurl || obj['image url'] || obj.image || obj.i || '',
+      badge:     obj.badge || obj.j || '',
+      desc:      obj.description || obj.k || '',
+      featured:  (obj.featured || obj.l || '').toLowerCase() === 'yes',
+      stock:     (obj.stock || obj.m || 'in stock').toLowerCase(),
+      heroSlide: (obj.heroslide || obj['hero slide'] || obj.n || '').toLowerCase() === 'yes',
+      promoBanner:(obj.promobanner || obj['promo banner'] || obj.o || '').toLowerCase() === 'yes',
+      waMsg:     obj.whatsappmsg || obj['whatsapp msg'] || obj.p || '',
+    };
+    products.push(p);
+  }
+  return products;
+}
+
+function parseCSVRow(row){
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for(let i = 0; i < row.length; i++){
+    const c = row[i];
+    if(c === '"'){ inQuotes = !inQuotes; current += c; }
+    else if(c === ',' && !inQuotes){ result.push(current); current = ''; }
+    else { current += c; }
+  }
+  result.push(current);
+  return result;
+}
+
+/* =============================================
+   DEMO PRODUCTS (shown if no sheet connected)
+   ============================================= */
+function getDemoProducts(){
+  return [
+    {sku:'SKU001',name:'Apple Watch Series 9',category:'Wearables',price:150,origPrice:200,color:'Midnight Black',size:'44mm',material:'Aluminum + Silicone',image:'https://placehold.co/300x300/009DA6/FFFFFF?text=Watch',badge:'New',desc:'Track your activity, measure workouts, and monitor your health with the latest Apple Watch.',featured:false,stock:'in stock',heroSlide:true,promoBanner:false,waMsg:''},
+    {sku:'SKU002',name:'iPad ProSuper 12.9"',category:'Tablets',price:140,origPrice:180,color:'Space Gray',size:'12.9 inch',material:'Aluminum',image:'https://placehold.co/300x300/6B3FA0/FFFFFF?text=iPad',badge:'',desc:'The most powerful iPad ever. Liquid Retina XDR display with stunning color accuracy.',featured:true,stock:'in stock',heroSlide:false,promoBanner:true,waMsg:''},
+    {sku:'SKU003',name:'iPhone 15 Plus',category:'Phones',price:250,origPrice:299,color:'Deep Purple',size:'6.7 inch',material:'Titanium + Ceramic',image:'https://placehold.co/300x300/FF6B00/FFFFFF?text=iPhone',badge:'Hot',desc:'Next-generation iPhone with A17 Pro chip and 48MP camera system.',featured:true,stock:'in stock',heroSlide:true,promoBanner:false,waMsg:''},
+    {sku:'SKU004',name:'Punchy Sandals',category:'Footwear',price:140,origPrice:0,color:'White / Coral',size:'36–44',material:'Premium Leather',image:'https://placehold.co/300x300/FFD600/333333?text=Sandals',badge:'',desc:'Lightweight and stylish sandals perfect for summer walks.',featured:false,stock:'in stock',heroSlide:false,promoBanner:true,waMsg:''},
+    {sku:'SKU005',name:'4K OLED Smart TV 55"',category:'TVs',price:80,origPrice:100,color:'Black',size:'55 inch',material:'Tempered Glass + Plastic',image:'https://placehold.co/300x300/1A1D23/FFFFFF?text=TV',badge:'',desc:'Crystal-clear 4K OLED display with HDR10+ and Dolby Vision.',featured:false,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+    {sku:'SKU006',name:'Galaxy Note Ultra',category:'Phones',price:70,origPrice:0,color:'Phantom Silver',size:'6.8 inch',material:'Gorilla Glass Armor',image:'https://placehold.co/300x300/3D4350/FFFFFF?text=Galaxy',badge:'',desc:'S-Pen included. Capture every idea with precision on a 6.8" Dynamic AMOLED display.',featured:false,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+    {sku:'SKU007',name:'Gaming PC Tower Pro',category:'Computers',price:50,origPrice:60,color:'Black / RGB',size:'Mid Tower',material:'Steel + Tempered Glass',image:'https://placehold.co/300x300/E53935/FFFFFF?text=PC',badge:'-17%',desc:'RTX 4080 · i9 CPU · 32GB RAM · 2TB NVMe SSD. Dominate every game.',featured:false,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+    {sku:'SKU008',name:'MacBook Air M3',category:'Laptops',price:70,origPrice:100,color:'Starlight',size:'15 inch',material:'Recycled Aluminum',image:'https://placehold.co/300x300/8892A0/FFFFFF?text=MacBook',badge:'-30%',desc:'Insanely fast M3 chip with 18-hour battery life and a stunning Liquid Retina display.',featured:true,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+    {sku:'SKU009',name:'Curved UltraWide Monitor',category:'Monitors',price:150,origPrice:200,color:'Silver',size:'34 inch',material:'Aluminum Stand + IPS',image:'https://placehold.co/300x300/43A047/FFFFFF?text=Monitor',badge:'',desc:'Immersive 34" curved ultrawide for productivity and gaming.',featured:true,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+    {sku:'SKU010',name:'iWatch Series 2',category:'Wearables',price:140,origPrice:0,color:'Rose Gold',size:'42mm',material:'Stainless Steel + Sport Band',image:'https://placehold.co/300x300/FF6B00/FFFFFF?text=iWatch',badge:'',desc:'Classic design meets smart features. GPS, heart rate, and sleep tracking.',featured:false,stock:'in stock',heroSlide:false,promoBanner:true,waMsg:''},
+    {sku:'SKU011',name:'Wireless Pro Headphones',category:'Audio',price:78,origPrice:0,color:'Matte Black',size:'Over-Ear',material:'Memory Foam + Aluminum',image:'https://placehold.co/300x300/1A1D23/FFFFFF?text=Headphones',badge:'New',desc:'40-hour battery, active noise cancellation, Hi-Res audio certified.',featured:true,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+    {sku:'SKU012',name:'Mini Laptop 2-in-1',category:'Laptops',price:68,origPrice:0,color:'Arctic White',size:'13.3 inch',material:'Polycarbonate + Gorilla Glass',image:'https://placehold.co/300x300/6B3FA0/FFFFFF?text=Laptop',badge:'',desc:'Flip-and-fold 2-in-1 laptop with stylus support and all-day battery.',featured:false,stock:'in stock',heroSlide:false,promoBanner:false,waMsg:''},
+  ];
+}
+
+/* =============================================
+   RENDER ALL
+   ============================================= */
+function renderAll(){
+  updateStoreName();
+  renderHero();
+  renderPromos();
+  renderFilterBar();
+  renderProducts();
+  renderFeatured();
+  renderCategories();
+  updateCartUI();
+  hideLoading();
+
+  if(CONFIG.AUTO_REFRESH_MIN > 0){
+    setTimeout(() => { loadProducts(); }, CONFIG.AUTO_REFRESH_MIN * 60000);
+  }
+}
+
+function updateStoreName(){
+  document.getElementById('storeName').textContent = CONFIG.STORE_NAME;
+  document.getElementById('footerName').textContent = CONFIG.STORE_NAME;
+  document.title = CONFIG.STORE_NAME + ' – Shop All You Want';
+}
+
+/* =============================================
+   HERO SLIDER
+   ============================================= */
+const heroColors = ['slide-teal','slide-purple','slide-orange'];
+function renderHero(){
+  heroSlides = allProducts.filter(p => p.heroSlide);
+  if(heroSlides.length === 0) heroSlides = allProducts.slice(0,3);
+
+  const slider = document.getElementById('heroSlider');
+  const dots = document.getElementById('heroDots');
+  slider.innerHTML = '';
+  dots.innerHTML = '';
+
+  heroSlides.forEach((p,i) => {
+    const discount = p.origPrice > p.price ? Math.round((1 - p.price/p.origPrice)*100) : 0;
+    const cl = heroColors[i % heroColors.length];
+    const slide = document.createElement('div');
+    slide.className = `hero-slide ${cl}`;
+    slide.innerHTML = `
+      <div class="hero-content">
+        <div class="hero-tag">OUR BEST</div>
+        <div class="hero-title">${p.name.toUpperCase()}</div>
+        <div class="hero-desc">${p.desc || 'Premium quality product at an unbeatable price.'}</div>
+        <div class="hero-price">${CONFIG.CURRENCY}${p.price.toFixed(2)} ${p.origPrice > p.price ? `<span class="orig">${CONFIG.CURRENCY}${p.origPrice.toFixed(2)}</span>` : ''}</div>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="openModal('${p.sku}')"><i class="fas fa-shopping-bag"></i> See More</button>
+          <button class="btn btn-outline" onclick="addToCart('${p.sku}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+        </div>
+      </div>
+      <div class="hero-images">
+        <img src="${p.image || 'https://placehold.co/300x300/cccccc/999999?text=No+Image'}" alt="${p.name}" onerror="this.src='https://placehold.co/300x300/cccccc/999999?text=No+Image'"/>
+      </div>`;
+    slider.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = 'hero-dot' + (i===0?' active':'');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+
+  currentSlide = 0;
+  startSlideShow();
+}
+
+function slideHero(dir){
+  goToSlide((currentSlide + dir + heroSlides.length) % heroSlides.length);
+}
+
+function goToSlide(n){
+  currentSlide = n;
+  document.getElementById('heroSlider').style.transform = `translateX(-${n*100}%)`;
+  document.querySelectorAll('.hero-dot').forEach((d,i) => d.classList.toggle('active', i===n));
+}
+
+function startSlideShow(){
+  clearInterval(slideTimer);
+  slideTimer = setInterval(() => slideHero(1), 5000);
+}
+
+/* =============================================
+   PROMO BANNERS
+   ============================================= */
+const promoColors = [
+  {bg:'#4527A0',text:'white'},
+  {bg:'#1565C0',text:'white'},
+  {bg:'#E65100',text:'white'},
+];
+function renderPromos(){
+  const promos = allProducts.filter(p => p.promoBanner);
+  const grid = document.getElementById('promoGrid');
+  grid.innerHTML = '';
+  if(promos.length === 0){ grid.style.display='none'; return; }
+  grid.style.display = 'grid';
+
+  promos.slice(0,3).forEach((p,i) => {
+    const c = promoColors[i % promoColors.length];
+    const card = document.createElement('div');
+    card.className = 'promo-card';
+    card.style.background = `linear-gradient(135deg, ${c.bg} 0%, ${c.bg}cc 100%)`;
+    card.innerHTML = `
+      <img class="promo-img" src="${p.image}" alt="${p.name}" onerror="this.style.display='none'"/>
+      <div class="promo-content">
+        <div class="promo-label">COLORFUL KICK</div>
+        <div class="promo-name">${p.name.toUpperCase()}</div>
+        <div class="promo-see"><i class="fas fa-arrow-right"></i> See More</div>
+        <div class="promo-price-tag">${CONFIG.CURRENCY}${p.price.toFixed(2)}</div>
+      </div>`;
+    card.onclick = () => openModal(p.sku);
+    grid.appendChild(card);
+  });
+}
+
+/* =============================================
+   FILTER BAR
+   ============================================= */
+function renderFilterBar(){
+  const cats = [...new Set(allProducts.map(p => p.category))].filter(Boolean);
+  const bar = document.getElementById('filterBar');
+  bar.innerHTML = `<span class="filter-label">Filter:</span><button class="filter-btn ${activeFilter==='all'?'active':''}" onclick="filterCat('all',this)">All</button>`;
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (activeFilter===cat?' active':'');
+    btn.textContent = cat;
+    btn.onclick = () => filterCat(cat, btn);
+    bar.appendChild(btn);
+  });
+}
+
+function filterCat(cat, btn){
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderProducts();
+}
+
+/* =============================================
+   PRODUCTS GRID
+   ============================================= */
+function renderProducts(){
+  filteredProducts = activeFilter === 'all' ? allProducts : allProducts.filter(p => p.category === activeFilter);
+  if(activeTab === 'featured') filteredProducts = filteredProducts.filter(p => p.featured);
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  if(filteredProducts.length === 0){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)"><i class="fas fa-box-open" style="font-size:48px;margin-bottom:12px"></i><p style="font-size:15px;font-weight:700">No products found</p></div>';
+    return;
+  }
+  filteredProducts.slice(0,12).forEach((p,i) => {
+    const card = makeProductCard(p, i);
+    grid.appendChild(card);
+  });
+}
+
+function renderFeatured(){
+  const prods = allProducts.filter(p => p.featured);
+  const grid = document.getElementById('featuredGrid');
+  grid.innerHTML = '';
+  if(prods.length === 0){
+    // fallback: show first 6
+    allProducts.slice(0,6).forEach((p,i) => grid.appendChild(makeProductCard(p,i)));
+    return;
+  }
+  prods.slice(0,6).forEach((p,i) => grid.appendChild(makeProductCard(p,i)));
+}
+
+function makeProductCard(p, i){
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.style.animationDelay = `${i * 0.06}s`;
+  const inStock = p.stock !== 'out of stock';
+  const discount = p.origPrice > p.price ? Math.round((1 - p.price/p.origPrice)*100) : 0;
+  const badgeHTML = p.badge ? `<div class="product-badge badge-${getBadgeClass(p.badge)}">${p.badge}</div>` : (discount > 0 ? `<div class="product-badge badge-sale">-${discount}%</div>` : '');
+  const origHTML = p.origPrice > p.price ? `<span class="price-orig">${CONFIG.CURRENCY}${p.origPrice.toFixed(2)}</span>` : '';
+  const metaChips = [p.color&&`<span class="meta-chip">${p.color}</span>`,p.size&&`<span class="meta-chip">${p.size}</span>`,p.material&&`<span class="meta-chip">${p.material}</span>`].filter(Boolean).join('');
+
+  card.innerHTML = `
+    ${badgeHTML}
+    <div class="product-wish" onclick="toggleWish(this,event)"><i class="far fa-heart"></i></div>
+    <div class="product-img-wrap">
+      <img src="${p.image||'https://placehold.co/200x200/eeeeee/999999?text=No+Image'}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/200x200/eeeeee/999999?text=No+Image'"/>
+      <div class="product-quick" onclick="openModal('${p.sku}')">QUICK VIEW</div>
+    </div>
+    <div class="product-info">
+      <div class="product-cat">${p.category}</div>
+      <div class="product-name">${p.name}</div>
+      ${metaChips ? `<div class="product-meta">${metaChips}</div>` : ''}
+      <div class="product-price">
+        <span class="price-current">${CONFIG.CURRENCY}${p.price.toFixed(2)}</span>
+        ${origHTML}
+      </div>
+      <div class="product-actions">
+        ${inStock
+          ? `<button class="btn-cart" onclick="addToCart('${p.sku}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+             <button class="btn-buy" onclick="buyNow('${p.sku}')"><i class="fab fa-whatsapp"></i> Buy Now</button>`
+          : `<button class="btn-cart" disabled style="opacity:.5;cursor:not-allowed;grid-column:1/-1">Out of Stock</button>`
+        }
+      </div>
+    </div>`;
+  return card;
+}
+
+function getBadgeClass(badge){
+  const b = badge.toLowerCase();
+  if(b.includes('sale') || b.includes('%') || b.includes('-')) return 'sale';
+  if(b.includes('hot')) return 'hot';
+  if(b.includes('new')) return 'new';
+  return 'sale';
+}
+
+/* =============================================
+   CATEGORIES
+   ============================================= */
+const catIcons = {
+  'phones':'fa-mobile-alt','tablets':'fa-tablet-alt','laptops':'fa-laptop',
+  'computers':'fa-desktop','tvs':'fa-tv','monitors':'fa-desktop',
+  'wearables':'fa-watch','audio':'fa-headphones','footwear':'fa-shoe-prints',
+  'fashion':'fa-tshirt','general':'fa-box','cameras':'fa-camera',
+  'accessories':'fa-plug','gaming':'fa-gamepad',
+};
+function renderCategories(){
+  const cats = [...new Set(allProducts.map(p => p.category))].filter(Boolean);
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = '';
+  cats.forEach(cat => {
+    const count = allProducts.filter(p => p.category === cat).length;
+    const icon = catIcons[cat.toLowerCase()] || 'fa-tag';
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.innerHTML = `<div class="cat-icon"><i class="fas ${icon}"></i></div><div class="cat-name">${cat}</div><div class="cat-count">${count} Products</div>`;
+    card.onclick = () => { filterCat(cat); document.getElementById('filterBar').scrollIntoView({behavior:'smooth',block:'center'}); };
+    grid.appendChild(card);
+  });
+}
+
+/* =============================================
+   TABS
+   ============================================= */
+function switchTab(tab, el){
+  activeTab = tab;
+  document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderProducts();
+}
+
+/* =============================================
+   CART
+   ============================================= */
+function addToCart(sku, qty=1, fromModal=false){
+  const prod = allProducts.find(p => p.sku === sku);
+  if(!prod) return;
+  if(prod.stock === 'out of stock'){ showToast('This item is out of stock.','warning'); return; }
+
+  const existing = cart.find(i => i.sku === sku);
+  if(existing){ existing.qty += qty; }
+  else{ cart.push({sku, name:prod.name, price:prod.price, image:prod.image, color:prod.color, size:prod.size, qty}); }
+
+  saveCart();
+  updateCartUI();
+  showToast(`"${prod.name}" added to cart!`, 'success');
+  if(!fromModal) openCart();
+}
+
+function removeFromCart(sku){
+  cart = cart.filter(i => i.sku !== sku);
+  saveCart();
+  updateCartUI();
+  renderCartItems();
+}
+
+function changeQty(sku, delta){
+  const item = cart.find(i => i.sku === sku);
+  if(!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  saveCart();
+  updateCartUI();
+  renderCartItems();
+}
+
+function saveCart(){ localStorage.setItem('revo_cart', JSON.stringify(cart)); }
+
+function updateCartUI(){
+  const total = cart.reduce((a,b) => a + b.qty, 0);
+  document.getElementById('cartBadge').textContent = total;
+  document.getElementById('cartCountHead').textContent = total;
+}
+
+function openCart(){
+  document.getElementById('cartSidebar').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderCartItems();
+}
+
+function closeCart(){
+  document.getElementById('cartSidebar').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderCartItems(){
+  const container = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+  container.innerHTML = '';
+
+  if(cart.length === 0){
+    container.innerHTML = `<div class="cart-empty"><i class="fas fa-shopping-cart"></i><p>Your cart is empty</p></div>`;
+    footer.style.display = 'none';
+    return;
+  }
+
+  cart.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'cart-item';
+    el.innerHTML = `
+      <img class="cart-item-img" src="${item.image||'https://placehold.co/64x64/eeeeee/999999?text=?'}" alt="${item.name}" onerror="this.src='https://placehold.co/64x64/eeeeee/999999?text=?'"/>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-meta">${[item.color,item.size].filter(Boolean).join(' · ') || 'Standard'}</div>
+        <div class="cart-item-bottom">
+          <div class="qty-ctrl">
+            <div class="qty-btn" onclick="changeQty('${item.sku}',-1)">−</div>
+            <div class="qty-val">${item.qty}</div>
+            <div class="qty-btn" onclick="changeQty('${item.sku}',1)">+</div>
+          </div>
+          <span class="cart-item-price">${CONFIG.CURRENCY}${(item.price * item.qty).toFixed(2)}</span>
+          <span class="cart-item-del" onclick="removeFromCart('${item.sku}')"><i class="fas fa-trash-alt"></i></span>
+        </div>
+      </div>`;
+    container.appendChild(el);
+  });
+
+  const subtotal = cart.reduce((a,b) => a + b.price * b.qty, 0);
+  document.getElementById('cartSubtotal').textContent = `${CONFIG.CURRENCY}${subtotal.toFixed(2)}`;
+  document.getElementById('cartTotal').textContent = `${CONFIG.CURRENCY}${subtotal.toFixed(2)}`;
+  footer.style.display = '';
+}
+
+function checkoutWhatsApp(){
+  let msg = `Hello! I'd like to order the following items from *${CONFIG.STORE_NAME}*:\n\n`;
+  cart.forEach(item => {
+    msg += `▸ *${item.name}*\n`;
+    if(item.color) msg += `  Color: ${item.color}\n`;
+    if(item.size) msg += `  Size: ${item.size}\n`;
+    msg += `  Qty: ${item.qty} × ${CONFIG.CURRENCY}${item.price.toFixed(2)}\n\n`;
+  });
+  const total = cart.reduce((a,b) => a + b.price * b.qty, 0);
+  msg += `*Total: ${CONFIG.CURRENCY}${total.toFixed(2)}*\n\nPlease confirm my order. Thank you!`;
+  window.open(`https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* =============================================
+   BUY NOW (single product)
+   ============================================= */
+function buyNow(sku){
+  const p = allProducts.find(x => x.sku === sku);
+  if(!p) return;
+  let msg = p.waMsg || `Hello! I want to buy *${p.name}* (SKU: ${p.sku})`;
+  msg += `\n\n▸ *${p.name}*\n`;
+  if(p.color) msg += `  Color: ${p.color}\n`;
+  if(p.size) msg += `  Size: ${p.size}\n`;
+  if(p.material) msg += `  Material: ${p.material}\n`;
+  msg += `  Price: *${CONFIG.CURRENCY}${p.price.toFixed(2)}*\n\nPlease confirm availability. Thank you!`;
+  window.open(`https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* =============================================
+   PRODUCT MODAL
+   ============================================= */
+function openModal(sku){
+  const p = allProducts.find(x => x.sku === sku);
+  if(!p) return;
+  currentModal = p;
+  modalQty = 1;
+  document.getElementById('modalQtyVal').textContent = 1;
+  document.getElementById('modalTitle').textContent = p.name;
+  document.getElementById('modalSku').textContent = `SKU: ${p.sku} · Category: ${p.category}`;
+  document.getElementById('modalName').textContent = p.name;
+  document.getElementById('modalPrice').textContent = `${CONFIG.CURRENCY}${p.price.toFixed(2)}`;
+  document.getElementById('modalOrig').textContent = p.origPrice > p.price ? `${CONFIG.CURRENCY}${p.origPrice.toFixed(2)}` : '';
+  document.getElementById('modalDesc').textContent = p.desc || 'No description available.';
+  document.getElementById('modalImg').src = p.image || 'https://placehold.co/300x300/eeeeee/999999?text=No+Image';
+  document.getElementById('modalImg').onerror = function(){ this.src='https://placehold.co/300x300/eeeeee/999999?text=No+Image'; };
+
+  const specs = [];
+  if(p.color) specs.push({label:'Color',value:p.color,isColor:true});
+  if(p.size) specs.push({label:'Size',value:p.size});
+  if(p.material) specs.push({label:'Material',value:p.material});
+  document.getElementById('modalSpecs').innerHTML = specs.map(s => `
+    <div class="spec-row">
+      <span class="spec-label">${s.label}:</span>
+      <span class="spec-value">${s.isColor ? `<span class="spec-color-dot" style="background:${getColorHex(s.value)}"></span>` : ''}${s.value}</span>
+    </div>`).join('');
+
+  const inStock = p.stock !== 'out of stock';
+  document.getElementById('modalStock').className = 'stock-status ' + (inStock ? 'in-stock' : 'out-stock');
+  document.getElementById('modalStock').innerHTML = `<div class="stock-dot"></div><span>${inStock ? 'In Stock' : 'Out of Stock'}</span>`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function getColorHex(colorName){
+  const map = {black:'#1A1D23',white:'#ffffff',red:'#E53935',blue:'#1565C0',green:'#43A047',
+    yellow:'#FFD600',orange:'#FF6B00',purple:'#6B3FA0',pink:'#E91E63',gray:'#8892A0',
+    silver:'#C0C0C0',gold:'#FFD700'};
+  const key = colorName.toLowerCase().split(/[\s\/,]+/)[0];
+  return map[key] || '#cccccc';
+}
+
+function closeModal(e){
+  if(e.target.id === 'modalOverlay') closeModalDirect();
+}
+function closeModalDirect(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function modalQtyChange(delta){
+  modalQty = Math.max(1, modalQty + delta);
+  document.getElementById('modalQtyVal').textContent = modalQty;
+}
+
+function addToCartModal(){
+  if(!currentModal) return;
+  addToCart(currentModal.sku, modalQty, true);
+  closeModalDirect();
+  openCart();
+}
+
+function buyNowModal(){
+  if(!currentModal) return;
+  const p = currentModal;
+  let msg = p.waMsg || `Hello! I want to buy *${p.name}*`;
+  msg += `\n\n▸ *${p.name}*`;
+  if(p.color) msg += `\n  Color: ${p.color}`;
+  if(p.size) msg += `\n  Size: ${p.size}`;
+  if(p.material) msg += `\n  Material: ${p.material}`;
+  msg += `\n  Qty: ${modalQty}`;
+  msg += `\n  Price: *${CONFIG.CURRENCY}${(p.price * modalQty).toFixed(2)}*`;
+  msg += `\n\nPlease confirm my order. Thank you!`;
+  window.open(`https://wa.me/${CONFIG.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* =============================================
+   SEARCH
+   ============================================= */
+function handleSearch(val){
+  const q = val.trim().toLowerCase();
+  if(!q){ renderProducts(); return; }
+  filteredProducts = allProducts.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.category.toLowerCase().includes(q) ||
+    p.desc.toLowerCase().includes(q) ||
+    p.sku.toLowerCase().includes(q) ||
+    p.color.toLowerCase().includes(q)
+  );
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  if(filteredProducts.length === 0){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)"><i class="fas fa-search" style="font-size:48px;margin-bottom:12px"></i><p style="font-size:15px;font-weight:700">No results for "${val}"</p></div>`;
+    return;
+  }
+  filteredProducts.slice(0,12).forEach((p,i) => grid.appendChild(makeProductCard(p,i)));
+  document.getElementById('productsGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* =============================================
+   WISHLIST (visual only)
+   ============================================= */
+function toggleWish(el, e){
+  e.stopPropagation();
+  el.classList.toggle('active');
+  const icon = el.querySelector('i');
+  icon.className = el.classList.contains('active') ? 'fas fa-heart' : 'far fa-heart';
+  showToast(el.classList.contains('active') ? 'Added to wishlist!' : 'Removed from wishlist.', 'success');
+}
+
+/* =============================================
+   TOAST
+   ============================================= */
+function showToast(msg, type=''){
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const icon = type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+  toast.innerHTML = `<i class="fas ${icon}"></i> ${msg}`;
+  container.appendChild(toast);
+  requestAnimationFrame(() => { requestAnimationFrame(() => toast.classList.add('show')); });
+  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+/* =============================================
+   LOADING
+   ============================================= */
+function hideLoading(){
+  setTimeout(() => { document.getElementById('loadingOverlay').classList.add('hidden'); }, 400);
+}
+
+/* =============================================
+   SCROLL PRODUCTS (section nav arrows)
+   ============================================= */
+function scrollProducts(dir){
+  const grid = document.getElementById('productsGrid');
+  grid.scrollBy({left: dir * 300, behavior:'smooth'});
+}
+
+/* =============================================
+   INIT
+   ============================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  loadProducts();
+
+  // Keyboard close for modal
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){
+      closeModalDirect();
+      closeCart();
+    }
+  });
+});
+</script>
+
+<!-- =============================================
+     HOW TO CONNECT YOUR GOOGLE SHEET
+     =============================================
+     1. Create a Google Sheet with these columns (Row 1 as headers):
+        SKU | Name | Category | Price | OriginalPrice | Color | Size | Material | ImageURL | Badge | Description | Featured | Stock | HeroSlide | PromoBanner | WhatsappMsg
+
+     2. Add your products row by row under the headers.
+        - Featured: yes / no
+        - Stock: in stock / out of stock
+        - HeroSlide: yes / no  (shows in hero banner)
+        - PromoBanner: yes / no  (shows in promo section)
+        - WhatsappMsg: custom message for Buy Now (optional)
+
+     3. Publish the sheet:
+        File → Share → Publish to Web → select Sheet1 → CSV → Publish
+
+     4. Copy the SHEET_ID from the URL bar when the sheet is open:
+        https://docs.google.com/spreadsheets/d/ [SHEET_ID] /edit
+
+     5. Paste it in the CONFIG object at the top of the <script> section:
+        SHEET_ID: 'your_sheet_id_here'
+
+     That's it! Every time the page loads, it fetches fresh data from your sheet.
+     Auto-refresh is set to every 5 minutes by default.
+============================================= -->
+</body>
+</html>
